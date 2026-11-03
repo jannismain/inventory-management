@@ -227,9 +227,8 @@
       <div class="card">
         <h3><span class="tag red">Missing</span> Unimplemented endpoints</h3>
         <ul>
-          <li><code>api.js</code> calls <code>/api/tasks</code> (GET, POST, PATCH, DELETE) and <code>/api/purchase-orders</code> (POST, GET by backlog id).</li>
-          <li><code>main.py</code> implements none of them. It defines the purchase-order models and only reads <code>purchase_orders.json</code> to compute <code>has_purchase_order</code>.</li>
-          <li>The Tasks modal and any purchase-order creation will fail against the current backend.</li>
+          <li><code>api.js</code> calls <code>/api/tasks</code> (GET, POST, PATCH, DELETE), which <code>main.py</code> does not implement.</li>
+          <li>The Tasks modal will fail against the current backend.</li>
         </ul>
       </div>
       <div class="card">

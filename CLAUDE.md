@@ -59,7 +59,7 @@ There is no linter and no frontend test suite configured. `/start`, `/stop`, and
 **Other frontend structure**: routes are defined in `client/src/main.js` (vue-router, history mode). i18n is hand-rolled (`composables/useI18n.js`, strings in `locales/en.js` and `ja.js`), so new UI text needs entries in both locales. `useAuth.js` holds mock auth state. Detail views open as `*DetailModal.vue` components.
 
 **Known gaps between client and server** (check before assuming a feature works end to end):
-- `api.js` calls `/api/tasks` (GET/POST/PATCH/DELETE) and `/api/purchase-orders` (POST, GET by backlog item id), but `main.py` implements none of them. It only defines the `PurchaseOrder`/`CreatePurchaseOrderRequest` models and reads `purchase_orders.json` to set `has_purchase_order` on `/api/backlog`.
+- `api.js` calls `/api/tasks` (GET/POST/PATCH/DELETE), but `main.py` does not implement it. `/api/purchase-orders` (POST, GET by backlog item id) is implemented; purchase orders are in-memory only and `/api/backlog` sets `has_purchase_order` from them.
 - `views/Backlog.vue` exists but has no route in `main.js`.
 
 ## Code Style

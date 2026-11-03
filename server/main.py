@@ -273,6 +273,50 @@ def get_backlog():
         result.append(item_dict)
     return result
 
+purchase_orders_lock = threading.Lock()
+
+@app.get("/api/purchase-orders/{backlog_item_id}", response_model=PurchaseOrder)
+def get_purchase_order_by_backlog_item(backlog_item_id: str):
+    """Get the purchase order for a backlog item"""
+    po = next((po for po in purchase_orders if po["backlog_item_id"] == backlog_item_id), None)
+    if not po:
+        raise HTTPException(status_code=404, detail="Purchase order not found")
+    return po
+
+@app.post("/api/purchase-orders", response_model=PurchaseOrder, status_code=201)
+def create_purchase_order(request: CreatePurchaseOrderRequest):
+    """Create a purchase order for a backlog item (one per item)"""
+    # Checked here rather than in the model: a 422 body would echo NaN/Infinity and fail JSON encoding
+    if not math.isfinite(request.unit_cost) or request.unit_cost < 0:
+        raise HTTPException(status_code=400, detail="Unit cost must be a non-negative number")
+    if request.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
+    if not request.supplier_name.strip():
+        raise HTTPException(status_code=400, detail="Supplier name is required")
+    try:
+        datetime.strptime(request.expected_delivery_date, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Expected delivery date must be YYYY-MM-DD")
+    if not any(item["id"] == request.backlog_item_id for item in backlog_items):
+        raise HTTPException(status_code=404, detail="Backlog item not found")
+
+    with purchase_orders_lock:
+        if any(po["backlog_item_id"] == request.backlog_item_id for po in purchase_orders):
+            raise HTTPException(status_code=409, detail="Purchase order already exists for this backlog item")
+        po = {
+            "id": f"PO-{len(purchase_orders) + 1:04d}",
+            "backlog_item_id": request.backlog_item_id,
+            "supplier_name": request.supplier_name.strip(),
+            "quantity": request.quantity,
+            "unit_cost": request.unit_cost,
+            "expected_delivery_date": request.expected_delivery_date,
+            "status": "Pending",
+            "created_date": datetime.now().date().isoformat(),
+            "notes": request.notes,
+        }
+        purchase_orders.append(po)
+    return po
+
 @app.get("/api/dashboard/summary")
 def get_dashboard_summary(
     warehouse: Optional[str] = None,
