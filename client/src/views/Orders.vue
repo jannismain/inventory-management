@@ -5,8 +5,8 @@
       <p>{{ t('orders.description') }}</p>
     </div>
 
+    <div v-if="error" class="error">{{ t('orders.loadFailed') }}</div>
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="stats-grid">
         <div class="stat-card success">
@@ -162,6 +162,7 @@ export default {
     const loadOrders = async () => {
       try {
         loading.value = true
+        error.value = null
         const filters = getCurrentFilters()
         const fetchedOrders = await api.getOrders(filters)
 
@@ -172,7 +173,8 @@ export default {
           return dateA - dateB
         })
       } catch (err) {
-        error.value = 'Failed to load orders: ' + err.message
+        error.value = true
+        console.error('Failed to load orders:', err)
       } finally {
         loading.value = false
       }

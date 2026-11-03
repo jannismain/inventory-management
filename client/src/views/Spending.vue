@@ -5,8 +5,8 @@
       <p>{{ t('finance.description') }}</p>
     </div>
 
+    <div v-if="error" class="error">{{ t('finance.loadFailed') }}</div>
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <!-- Revenue & Financial KPIs -->
       <div class="stats-grid">
@@ -350,6 +350,7 @@ export default {
     const loadData = async () => {
       try {
         loading.value = true
+        error.value = null
         const [summaryRes, monthlyRes, categoryRes, transactionsRes, ordersRes] = await Promise.all([
           api.getSpendingSummary(),
           api.getMonthlySpending(),
@@ -364,7 +365,8 @@ export default {
         allTransactions.value = transactionsRes
         allOrders.value = ordersRes
       } catch (err) {
-        error.value = 'Failed to load financial data: ' + err.message
+        error.value = true
+        console.error('Failed to load financial data:', err)
       } finally {
         loading.value = false
       }

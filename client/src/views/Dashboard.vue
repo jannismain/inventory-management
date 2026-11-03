@@ -4,8 +4,8 @@
       <h2>{{ t('dashboard.title') }}</h2>
     </div>
 
+    <div v-if="error" class="error">{{ t('dashboard.loadFailed') }}</div>
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <!-- Key Performance Indicators -->
       <div class="kpi-section">
@@ -562,6 +562,7 @@ export default {
     const loadData = async () => {
       try {
         loading.value = true
+        error.value = null
         const filters = getCurrentFilters()
 
         const [summaryData, ordersData, inventoryData, backlogData] = await Promise.all([
@@ -576,7 +577,8 @@ export default {
         inventoryItems.value = inventoryData
         allBacklogItems.value = backlogData
       } catch (err) {
-        error.value = 'Failed to load dashboard data: ' + err.message
+        error.value = true
+        console.error('Failed to load dashboard data:', err)
       } finally {
         loading.value = false
       }

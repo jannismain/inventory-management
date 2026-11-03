@@ -5,8 +5,8 @@
       <p>View quarterly performance metrics and monthly trends</p>
     </div>
 
+    <div v-if="error" class="error">{{ t('reports.loadFailed') }}</div>
     <div v-if="loading" class="loading">Loading reports...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else class="report-sections">
       <!-- Quarterly Performance -->
       <div class="card">
@@ -126,9 +126,14 @@
 
 <script>
 import axios from 'axios'
+import { useI18n } from '../composables/useI18n'
 
 export default {
   name: 'Reports',
+  setup() {
+    const { t } = useI18n()
+    return { t }
+  },
   data() {
     return {
       loading: true,
@@ -150,6 +155,7 @@ export default {
       console.log('Loading reports data...')
       try {
         this.loading = true
+        this.error = null
 
         // Fetch quarterly data
         console.log('Fetching quarterly data...')
@@ -169,8 +175,8 @@ export default {
         console.log('Summary stats calculated')
 
       } catch (err) {
-        console.log('Error loading reports:', err)
-        this.error = 'Failed to load reports: ' + err.message
+        console.error('Error loading reports:', err)
+        this.error = true
       } finally {
         this.loading = false
         console.log('Loading complete')

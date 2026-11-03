@@ -5,8 +5,8 @@
       <p>Track and resolve inventory shortages</p>
     </div>
 
+    <div v-if="error" class="error">{{ t('backlog.loadFailed') }}</div>
     <div v-if="loading" class="loading">Loading backlog...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="stats-grid">
         <div class="stat-card danger">
@@ -85,10 +85,12 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
+import { useI18n } from '../composables/useI18n'
 
 export default {
   name: 'Backlog',
   setup() {
+    const { t } = useI18n()
     const loading = ref(true)
     const error = ref(null)
     const allBacklogItems = ref([])
@@ -111,6 +113,7 @@ export default {
     const loadBacklog = async () => {
       try {
         loading.value = true
+        error.value = null
         const filters = getCurrentFilters()
 
         const [backlogData, inventoryData] = await Promise.all([
@@ -124,7 +127,8 @@ export default {
         allBacklogItems.value = backlogData
         inventoryItems.value = inventoryData
       } catch (err) {
-        error.value = 'Failed to load backlog: ' + err.message
+        error.value = true
+        console.error('Failed to load backlog:', err)
       } finally {
         loading.value = false
       }
@@ -142,6 +146,7 @@ export default {
     onMounted(loadBacklog)
 
     return {
+      t,
       loading,
       error,
       backlogItems,

@@ -21,6 +21,7 @@ export default {
 
   // Dashboard
   dashboard: {
+    loadFailed: 'Failed to load dashboard data',
     title: 'Overview',
     kpi: {
       title: 'Key Performance Indicators',
@@ -83,6 +84,7 @@ export default {
 
   // Inventory
   inventory: {
+    loadFailed: 'Failed to load inventory',
     title: 'Inventory',
     description: 'Track and manage all inventory items',
     stockLevels: 'Stock Levels',
@@ -112,6 +114,7 @@ export default {
 
   // Orders
   orders: {
+    loadFailed: 'Failed to load orders',
     title: 'Orders',
     description: 'View and manage customer orders',
     allOrders: 'All Orders',
@@ -147,6 +150,7 @@ export default {
 
   // Finance/Spending
   finance: {
+    loadFailed: 'Failed to load financial data',
     title: 'Finance Dashboard',
     description: 'Track revenue, costs, and financial performance',
     totalRevenue: 'Total Revenue',
@@ -185,6 +189,7 @@ export default {
 
   // Demand Forecast
   demand: {
+    loadFailed: 'Failed to load demand forecasts',
     title: 'Demand Forecast',
     description: 'Analyze demand trends and forecasts',
     increasingDemand: 'Increasing Demand',
@@ -234,6 +239,16 @@ export default {
       lineTotal: 'Line Total',
       leadTime: 'Lead Time'
     }
+  },
+
+  // Backlog
+  backlog: {
+    loadFailed: 'Failed to load backlog'
+  },
+
+  // Reports
+  reports: {
+    loadFailed: 'Failed to load reports'
   },
 
   // Filters

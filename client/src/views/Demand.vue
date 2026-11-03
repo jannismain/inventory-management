@@ -5,8 +5,8 @@
       <p>{{ t('demand.description') }}</p>
     </div>
 
+    <div v-if="error" class="error">{{ t('demand.loadFailed') }}</div>
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="demand-trend-cards">
         <div class="trend-card increasing-card">
@@ -142,6 +142,7 @@ export default {
     const loadForecasts = async () => {
       try {
         loading.value = true
+        error.value = null
         const filters = getCurrentFilters()
 
         const [forecastsData, inventoryData] = await Promise.all([
@@ -155,7 +156,8 @@ export default {
         allForecasts.value = forecastsData
         inventoryItems.value = inventoryData
       } catch (err) {
-        error.value = 'Failed to load demand forecasts: ' + err.message
+        error.value = true
+        console.error('Failed to load demand forecasts:', err)
       } finally {
         loading.value = false
       }

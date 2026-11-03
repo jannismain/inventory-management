@@ -21,6 +21,7 @@ export default {
 
   // Dashboard
   dashboard: {
+    loadFailed: 'ダッシュボードのデータを読み込めませんでした',
     title: '概要',
     kpi: {
       title: '主要業績評価指標',
@@ -83,6 +84,7 @@ export default {
 
   // Inventory
   inventory: {
+    loadFailed: '在庫を読み込めませんでした',
     title: '在庫',
     description: 'すべての在庫品目の追跡と管理',
     stockLevels: '在庫レベル',
@@ -112,6 +114,7 @@ export default {
 
   // Orders
   orders: {
+    loadFailed: '注文を読み込めませんでした',
     title: '注文',
     description: '顧客注文の表示と管理',
     allOrders: 'すべての注文',
@@ -147,6 +150,7 @@ export default {
 
   // Finance/Spending
   finance: {
+    loadFailed: '財務データを読み込めませんでした',
     title: '財務ダッシュボード',
     description: '収益、コスト、財務パフォーマンスの追跡',
     totalRevenue: '総収益',
@@ -185,6 +189,7 @@ export default {
 
   // Demand Forecast
   demand: {
+    loadFailed: '需要予測を読み込めませんでした',
     title: '需要予測',
     description: '需要動向の分析と将来のニーズの予測',
     increasingDemand: '需要増加',
@@ -234,6 +239,16 @@ export default {
       lineTotal: '小計',
       leadTime: 'リードタイム'
     }
+  },
+
+  // Backlog
+  backlog: {
+    loadFailed: 'バックログを読み込めませんでした'
+  },
+
+  // Reports
+  reports: {
+    loadFailed: 'レポートを読み込めませんでした'
   },
 
   // Filters

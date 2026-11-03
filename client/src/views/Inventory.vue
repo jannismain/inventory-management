@@ -5,8 +5,8 @@
       <p>{{ t('inventory.description') }}</p>
     </div>
 
+    <div v-if="error" class="error">{{ t('inventory.loadFailed') }}</div>
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="card">
         <div class="card-header">
@@ -152,6 +152,7 @@ export default {
     const loadInventory = async () => {
       try {
         loading.value = true
+        error.value = null
         const filters = getCurrentFilters()
         // Inventory doesn't support month/status filters, only warehouse and category
         items.value = await api.getInventory({
@@ -159,7 +160,8 @@ export default {
           category: filters.category
         })
       } catch (err) {
-        error.value = 'Failed to load inventory: ' + err.message
+        error.value = true
+        console.error('Failed to load inventory:', err)
       } finally {
         loading.value = false
       }
