@@ -2,9 +2,14 @@
   <div class="filters-bar">
     <div class="filters-container">
       <div class="filters-grid">
-        <div class="filter-group">
+        <div class="filter-group" :class="{ 'filter-group--inactive': !isApplicable('period') }">
           <label>{{ t('filters.timePeriod') }}</label>
-          <select v-model="selectedPeriod" class="filter-select">
+          <select
+            v-model="selectedPeriod"
+            class="filter-select"
+            :disabled="!isApplicable('period')"
+            :title="isApplicable('period') ? undefined : t('filters.notApplied')"
+          >
             <option value="all">{{ t('filters.allMonths') }}</option>
             <option value="2025-01">{{ t('months.january') }}</option>
             <option value="2025-02">{{ t('months.february') }}</option>
@@ -21,9 +26,14 @@
           </select>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" :class="{ 'filter-group--inactive': !isApplicable('location') }">
           <label>{{ t('filters.location') }}</label>
-          <select v-model="selectedLocation" class="filter-select">
+          <select
+            v-model="selectedLocation"
+            class="filter-select"
+            :disabled="!isApplicable('location')"
+            :title="isApplicable('location') ? undefined : t('filters.notApplied')"
+          >
             <option value="all">{{ t('filters.all') }}</option>
             <option value="San Francisco">{{ t('warehouses.sanFrancisco') }}</option>
             <option value="London">{{ t('warehouses.london') }}</option>
@@ -31,9 +41,14 @@
           </select>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" :class="{ 'filter-group--inactive': !isApplicable('category') }">
           <label>{{ t('filters.category') }}</label>
-          <select v-model="selectedCategory" class="filter-select">
+          <select
+            v-model="selectedCategory"
+            class="filter-select"
+            :disabled="!isApplicable('category')"
+            :title="isApplicable('category') ? undefined : t('filters.notApplied')"
+          >
             <option value="all">{{ t('filters.all') }}</option>
             <option value="circuit boards">{{ t('categories.circuitBoards') }}</option>
             <option value="sensors">{{ t('categories.sensors') }}</option>
@@ -43,9 +58,14 @@
           </select>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" :class="{ 'filter-group--inactive': !isApplicable('status') }">
           <label>{{ t('filters.orderStatus') }}</label>
-          <select v-model="selectedStatus" class="filter-select">
+          <select
+            v-model="selectedStatus"
+            class="filter-select"
+            :disabled="!isApplicable('status')"
+            :title="isApplicable('status') ? undefined : t('filters.notApplied')"
+          >
             <option value="all">{{ t('filters.all') }}</option>
             <option value="delivered">{{ t('status.delivered') }}</option>
             <option value="shipped">{{ t('status.shipped') }}</option>
@@ -72,6 +92,7 @@
 <script>
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { useFilterScope } from '../composables/useFilterScope'
 
 export default {
   name: 'FilterBar',
@@ -86,9 +107,11 @@ export default {
     } = useFilters()
 
     const { t } = useI18n()
+    const { isApplicable } = useFilterScope()
 
     return {
       t,
+      isApplicable,
       selectedPeriod,
       selectedLocation,
       selectedCategory,
@@ -156,7 +179,15 @@ export default {
   min-width: 128px;
 }
 
-.filter-select:hover {
+.filter-group--inactive {
+  opacity: 0.5;
+}
+
+.filter-select:disabled {
+  cursor: not-allowed;
+}
+
+.filter-select:hover:not(:disabled) {
   border-color: var(--color-text-muted);
 }
 

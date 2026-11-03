@@ -243,7 +243,8 @@ export default {
     category: 'カテゴリ',
     orderStatus: '注文ステータス',
     all: 'すべて',
-    allMonths: 'すべての月'
+    allMonths: 'すべての月',
+    notApplied: 'このページでは適用されません'
   },
 
   // Statuses

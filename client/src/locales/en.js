@@ -243,7 +243,8 @@ export default {
     category: 'Category',
     orderStatus: 'Order Status',
     all: 'All',
-    allMonths: 'All Months'
+    allMonths: 'All Months',
+    notApplied: 'Not applied on this page'
   },
 
   // Statuses
