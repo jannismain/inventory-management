@@ -132,7 +132,7 @@
 
 <script>
 import { ref, onMounted, watch, computed } from 'vue'
-import { api } from '../api'
+import { api, createRequestGuard } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 
@@ -159,11 +159,15 @@ export default {
       getCurrentFilters
     } = useFilters()
 
+    const startLoad = createRequestGuard()
+
     const loadOrders = async () => {
+      const isLatest = startLoad()
       try {
         loading.value = true
         const filters = getCurrentFilters()
         const fetchedOrders = await api.getOrders(filters)
+        if (!isLatest()) return
 
         // Sort orders by order_date (earliest first)
         orders.value = fetchedOrders.sort((a, b) => {
@@ -172,9 +176,9 @@ export default {
           return dateA - dateB
         })
       } catch (err) {
-        error.value = 'Failed to load orders: ' + err.message
+        if (isLatest()) error.value = 'Failed to load orders: ' + err.message
       } finally {
-        loading.value = false
+        if (isLatest()) loading.value = false
       }
     }
 

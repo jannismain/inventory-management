@@ -2,6 +2,17 @@ import axios from 'axios'
 
 const API_BASE_URL = 'http://localhost:8001/api'
 
+// Each call to the returned function starts a new request and returns an `isLatest`
+// predicate that turns false once a newer request has started, so slower, older
+// responses can be discarded instead of overwriting newer data.
+export function createRequestGuard() {
+  let latestId = 0
+  return () => {
+    const id = ++latestId
+    return () => id === latestId
+  }
+}
+
 export const api = {
   async getInventory(filters = {}) {
     const params = new URLSearchParams()

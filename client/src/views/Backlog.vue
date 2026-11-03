@@ -83,7 +83,7 @@
 
 <script>
 import { ref, onMounted, watch, computed } from 'vue'
-import { api } from '../api'
+import { api, createRequestGuard } from '../api'
 import { useFilters } from '../composables/useFilters'
 
 export default {
@@ -108,7 +108,10 @@ export default {
       return allBacklogItems.value.filter(b => validSkus.has(b.item_sku))
     })
 
+    const startLoad = createRequestGuard()
+
     const loadBacklog = async () => {
+      const isLatest = startLoad()
       try {
         loading.value = true
         const filters = getCurrentFilters()
@@ -120,13 +123,14 @@ export default {
             category: filters.category
           })
         ])
+        if (!isLatest()) return
 
         allBacklogItems.value = backlogData
         inventoryItems.value = inventoryData
       } catch (err) {
-        error.value = 'Failed to load backlog: ' + err.message
+        if (isLatest()) error.value = 'Failed to load backlog: ' + err.message
       } finally {
-        loading.value = false
+        if (isLatest()) loading.value = false
       }
     }
 

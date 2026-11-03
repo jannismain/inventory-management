@@ -85,7 +85,7 @@
 
 <script>
 import { ref, onMounted, watch, computed } from 'vue'
-import { api } from '../api'
+import { api, createRequestGuard } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import InventoryDetailModal from '../components/InventoryDetailModal.vue'
@@ -149,19 +149,24 @@ export default {
       })
     })
 
+    const startLoad = createRequestGuard()
+
     const loadInventory = async () => {
+      const isLatest = startLoad()
       try {
         loading.value = true
         const filters = getCurrentFilters()
         // Inventory doesn't support month/status filters, only warehouse and category
-        items.value = await api.getInventory({
+        const data = await api.getInventory({
           warehouse: filters.warehouse,
           category: filters.category
         })
+        if (!isLatest()) return
+        items.value = data
       } catch (err) {
-        error.value = 'Failed to load inventory: ' + err.message
+        if (isLatest()) error.value = 'Failed to load inventory: ' + err.message
       } finally {
-        loading.value = false
+        if (isLatest()) loading.value = false
       }
     }
 

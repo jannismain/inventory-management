@@ -299,7 +299,7 @@
 
 <script>
 import { ref, onMounted, computed, watch } from 'vue'
-import { api } from '../api'
+import { api, createRequestGuard } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import { formatCurrency } from '../utils/currency'
@@ -559,7 +559,10 @@ export default {
       return allBacklogItems.value.filter(b => validSkus.has(b.item_sku))
     })
 
+    const startLoad = createRequestGuard()
+
     const loadData = async () => {
+      const isLatest = startLoad()
       try {
         loading.value = true
         const filters = getCurrentFilters()
@@ -570,15 +573,16 @@ export default {
           api.getInventory(filters),
           api.getBacklog()
         ])
+        if (!isLatest()) return
 
         summary.value = summaryData
         allOrders.value = ordersData
         inventoryItems.value = inventoryData
         allBacklogItems.value = backlogData
       } catch (err) {
-        error.value = 'Failed to load dashboard data: ' + err.message
+        if (isLatest()) error.value = 'Failed to load dashboard data: ' + err.message
       } finally {
-        loading.value = false
+        if (isLatest()) loading.value = false
       }
     }
 

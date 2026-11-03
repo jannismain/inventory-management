@@ -112,7 +112,7 @@
 
 <script>
 import { ref, onMounted, watch, computed } from 'vue'
-import { api } from '../api'
+import { api, createRequestGuard } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 
@@ -139,7 +139,10 @@ export default {
       return allForecasts.value.filter(f => validSkus.has(f.item_sku))
     })
 
+    const startLoad = createRequestGuard()
+
     const loadForecasts = async () => {
+      const isLatest = startLoad()
       try {
         loading.value = true
         const filters = getCurrentFilters()
@@ -151,13 +154,14 @@ export default {
             category: filters.category
           })
         ])
+        if (!isLatest()) return
 
         allForecasts.value = forecastsData
         inventoryItems.value = inventoryData
       } catch (err) {
-        error.value = 'Failed to load demand forecasts: ' + err.message
+        if (isLatest()) error.value = 'Failed to load demand forecasts: ' + err.message
       } finally {
-        loading.value = false
+        if (isLatest()) loading.value = false
       }
     }
 
