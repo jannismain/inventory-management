@@ -350,7 +350,14 @@ export default {
     priority: '優先度',
     dueDate: '期限',
     addTask: 'タスクを追加',
-    noTasks: 'タスクがありません。上記からタスクを追加してください！'
+    noTasks: 'タスクがありません。上記からタスクを追加してください！',
+    addFailed: 'タスクを追加できませんでした。もう一度お試しください。',
+    toggleFailed: 'タスクを更新できませんでした。もう一度お試しください。',
+    deleteFailed: 'タスクを削除できませんでした。もう一度お試しください。'
+  },
+
+  toast: {
+    dismiss: '通知を閉じる'
   },
 
   // Language

@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="form-group-btn">
-                  <button @click="handleAddTask" class="btn-primary task-add-btn" :disabled="!newTask.title.trim() || !newTask.dueDate">
+                  <button @click="handleAddTask" class="btn-primary task-add-btn" :disabled="submitting || !newTask.title.trim() || !newTask.dueDate">
                     {{ t('tasks.addTask') }}
                   </button>
                 </div>
@@ -132,9 +132,14 @@ export default {
     tasks: {
       type: Array,
       default: () => []
+    },
+    // Async handler resolving to true on success, false on failure
+    submitTask: {
+      type: Function,
+      required: true
     }
   },
-  emits: ['close', 'add-task', 'delete-task', 'toggle-task'],
+  emits: ['close', 'delete-task', 'toggle-task'],
   setup(props, { emit }) {
     const { t, currentLocale } = useI18n()
     const newTask = ref({
@@ -152,18 +157,27 @@ export default {
       emit('close')
     }
 
-    const handleAddTask = () => {
-      if (newTask.value.title.trim() && newTask.value.dueDate) {
-        emit('add-task', {
+    const submitting = ref(false)
+
+    const handleAddTask = async () => {
+      if (submitting.value) return
+      if (!newTask.value.title.trim() || !newTask.value.dueDate) return
+      submitting.value = true
+      try {
+        const ok = await props.submitTask({
           title: newTask.value.title.trim(),
           priority: newTask.value.priority,
           dueDate: newTask.value.dueDate
         })
-        newTask.value = {
-          title: '',
-          priority: 'medium',
-          dueDate: ''
+        if (ok) {
+          newTask.value = {
+            title: '',
+            priority: 'medium',
+            dueDate: ''
+          }
         }
+      } finally {
+        submitting.value = false
       }
     }
 
@@ -235,6 +249,7 @@ export default {
       sortedTasks,
       close,
       handleAddTask,
+      submitting,
       formatDueDate,
       getStatusClass,
       getStatusText,

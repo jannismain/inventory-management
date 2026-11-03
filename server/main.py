@@ -156,6 +156,22 @@ class RestockingOrder(BaseModel):
 restocking_orders: List[dict] = []
 restocking_orders_lock = threading.Lock()
 
+class Task(BaseModel):
+    id: str
+    title: str
+    priority: str
+    dueDate: str
+    status: str
+
+class CreateTaskRequest(BaseModel):
+    title: str
+    priority: str = "medium"
+    dueDate: str
+
+tasks: List[dict] = []
+tasks_lock = threading.Lock()
+TASK_PRIORITIES = ("high", "medium", "low")
+
 # API endpoints
 @app.get("/")
 def root():
@@ -201,6 +217,55 @@ def get_order(order_id: str):
 def get_demand_forecasts():
     """Get demand forecasts"""
     return demand_forecasts
+
+@app.get("/api/tasks", response_model=List[Task])
+def get_tasks():
+    """Get tasks, newest first"""
+    with tasks_lock:
+        return list(reversed(tasks))
+
+@app.post("/api/tasks", response_model=Task, status_code=201)
+def create_task(request: CreateTaskRequest):
+    """Create a pending task"""
+    title = request.title.strip()
+    if not title:
+        raise HTTPException(status_code=400, detail="Task title must not be empty")
+    if request.priority not in TASK_PRIORITIES:
+        raise HTTPException(status_code=400, detail=f"Priority must be one of: {', '.join(TASK_PRIORITIES)}")
+    try:
+        datetime.strptime(request.dueDate, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="dueDate must be in YYYY-MM-DD format")
+    with tasks_lock:
+        task = {
+            "id": f"task-{len(tasks) + 1}-{int(datetime.now().timestamp() * 1000)}",
+            "title": title,
+            "priority": request.priority,
+            "dueDate": request.dueDate,
+            "status": "pending",
+        }
+        tasks.append(task)
+    return task
+
+@app.patch("/api/tasks/{task_id}", response_model=Task)
+def toggle_task(task_id: str):
+    """Toggle a task between pending and completed"""
+    with tasks_lock:
+        for task in tasks:
+            if task["id"] == task_id:
+                task["status"] = "completed" if task["status"] == "pending" else "pending"
+                return dict(task)
+    raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
+
+@app.delete("/api/tasks/{task_id}", status_code=204)
+def delete_task(task_id: str):
+    """Delete a task"""
+    with tasks_lock:
+        for i, task in enumerate(tasks):
+            if task["id"] == task_id:
+                del tasks[i]
+                return
+    raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
 
 @app.get("/api/restocking-orders", response_model=List[RestockingOrder])
 def get_restocking_orders():

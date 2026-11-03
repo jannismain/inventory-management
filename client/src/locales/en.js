@@ -350,7 +350,14 @@ export default {
     priority: 'Priority',
     dueDate: 'Due Date',
     addTask: 'Add Task',
-    noTasks: 'No tasks yet. Add your first task above!'
+    noTasks: 'No tasks yet. Add your first task above!',
+    addFailed: 'Could not add the task. Please try again.',
+    toggleFailed: 'Could not update the task. Please try again.',
+    deleteFailed: 'Could not delete the task. Please try again.'
+  },
+
+  toast: {
+    dismiss: 'Dismiss notification'
   },
 
   // Language

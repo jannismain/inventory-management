@@ -96,10 +96,12 @@
       :is-open="showTasks"
       :tasks="tasks"
       @close="showTasks = false"
-      @add-task="addTask"
+      :submit-task="addTask"
       @delete-task="deleteTask"
       @toggle-task="toggleTask"
     />
+
+    <ToastHost />
   </div>
 </template>
 
@@ -115,10 +117,13 @@ import ProfileMenu from './components/ProfileMenu.vue'
 import ProfileDetailsModal from './components/ProfileDetailsModal.vue'
 import TasksModal from './components/TasksModal.vue'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
+import ToastHost from './components/ToastHost.vue'
+import { useToast } from './composables/useToast'
 
 export default {
   name: 'App',
   components: {
+    ToastHost,
     FilterBar,
     ProfileMenu,
     ProfileDetailsModal,
@@ -128,6 +133,7 @@ export default {
   setup() {
     const { currentUser } = useAuth()
     const { t } = useI18n()
+    const { showToast } = useToast()
     const route = useRoute()
     const { collapsed, toggleSidebar } = useSidebar()
     const drawerOpen = ref(false)
@@ -153,8 +159,11 @@ export default {
         const newTask = await api.createTask(taskData)
         // Add new task to the beginning of the array
         apiTasks.value.unshift(newTask)
+        return true
       } catch (err) {
         console.error('Failed to add task:', err)
+        showToast(t('tasks.addFailed'))
+        return false
       }
     }
 
@@ -176,6 +185,7 @@ export default {
         }
       } catch (err) {
         console.error('Failed to delete task:', err)
+        showToast(t('tasks.deleteFailed'))
       }
     }
 
@@ -197,6 +207,7 @@ export default {
         }
       } catch (err) {
         console.error('Failed to toggle task:', err)
+        showToast(t('tasks.toggleFailed'))
       }
     }
 
