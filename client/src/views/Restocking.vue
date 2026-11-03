@@ -24,7 +24,7 @@
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">{{ t('restocking.budget') }}</h3>
-          <span class="budget-value">{{ currencySymbol }}{{ budget.toLocaleString() }}</span>
+          <span class="budget-value">{{ formatBudget(budget) }}</span>
         </div>
         <input
           v-model.number="budget"
@@ -37,23 +37,23 @@
           :aria-label="t('restocking.budget')"
         />
         <div class="slider-scale">
-          <span>{{ currencySymbol }}0</span>
-          <span>{{ currencySymbol }}{{ maxBudget.toLocaleString() }}</span>
+          <span>{{ formatBudget(0) }}</span>
+          <span>{{ formatBudget(maxBudget) }}</span>
         </div>
       </div>
 
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">{{ t('restocking.budget') }}</div>
-          <div class="stat-value">{{ currencySymbol }}{{ budget.toLocaleString() }}</div>
+          <div class="stat-value">{{ formatBudget(budget) }}</div>
         </div>
         <div :class="['stat-card', overBudget ? 'danger' : 'info']">
           <div class="stat-label">{{ t('restocking.spent') }}</div>
-          <div class="stat-value">{{ currencySymbol }}{{ formatMoney(spentCents / 100) }}</div>
+          <div class="stat-value">{{ formatMoney(spentCents / 100) }}</div>
         </div>
         <div :class="['stat-card', overBudget ? 'danger' : 'success']">
           <div class="stat-label">{{ t('restocking.remaining') }}</div>
-          <div class="stat-value">{{ currencySymbol }}{{ formatMoney(remainingCents / 100) }}</div>
+          <div class="stat-value">{{ formatMoney(remainingCents / 100) }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">{{ t('restocking.longestLeadTime') }}</div>
@@ -62,7 +62,7 @@
       </div>
 
       <div v-if="overBudget" class="warning-banner">
-        {{ t('restocking.overBudget', { amount: currencySymbol + formatMoney((spentCents - budgetCents) / 100) }) }}
+        {{ t('restocking.overBudget', { amount: formatMoney((spentCents - budgetCents) / 100) }) }}
       </div>
       <div v-if="submitError" class="error">{{ t('restocking.submitFailed') }}</div>
 
@@ -107,7 +107,7 @@
                 <td class="num">{{ row.stock }}</td>
                 <td class="num">{{ row.forecast }}</td>
                 <td class="num">{{ row.shortfall }}</td>
-                <td class="num">{{ currencySymbol }}{{ formatMoney(row.unitCostCents / 100) }}</td>
+                <td class="num">{{ formatMoney(row.unitCostCents / 100) }}</td>
                 <td class="num">
                   <input
                     type="number"
@@ -120,7 +120,7 @@
                     @change="setQuantity(row, $event.target)"
                   />
                 </td>
-                <td class="num">{{ currencySymbol }}{{ formatMoney(row.lineTotalCents / 100) }}</td>
+                <td class="num">{{ formatMoney(row.lineTotalCents / 100) }}</td>
                 <td class="num">{{ row.leadTime }} {{ t('restocking.days') }}</td>
               </tr>
             </tbody>
@@ -135,6 +135,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { api } from '../api'
 import { useI18n } from '../composables/useI18n'
+import { formatCurrency, formatCurrencyWithDecimals } from '../utils/currency'
 
 const BUDGET_STEP = 100
 const TREND_ORDER = { increasing: 0, stable: 1, decreasing: 2 }
@@ -143,10 +144,6 @@ export default {
   name: 'Restocking',
   setup() {
     const { t, currentCurrency, translateProductName } = useI18n()
-
-    const currencySymbol = computed(() => {
-      return currentCurrency.value === 'JPY' ? '¥' : '$'
-    })
 
     const loading = ref(true)
     const loadError = ref(false)
@@ -226,9 +223,9 @@ export default {
       return !submitting.value && !orderLocked.value && !overBudget.value && orderedRows.value.length > 0
     })
 
-    const formatMoney = (value) => {
-      return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    }
+    // All amounts are held in USD; conversion happens only for display
+    const formatMoney = (usd) => formatCurrencyWithDecimals(usd, currentCurrency.value, 2)
+    const formatBudget = (usd) => formatCurrency(usd, currentCurrency.value)
 
     // A placed order stays locked until the plan changes, so it cannot be submitted twice
     const unlockOrder = () => {
@@ -271,7 +268,7 @@ export default {
       placedOrder.value = null
       try {
         placedOrder.value = await api.createRestockingOrder({
-          budget: budget.value,
+          budget: budget.value, // always USD, independent of display currency
           items: orderedRows.value.map(r => ({ sku: r.sku, quantity: r.quantity }))
         })
         orderLocked.value = true
@@ -288,7 +285,6 @@ export default {
     return {
       t,
       BUDGET_STEP,
-      currencySymbol,
       loading,
       loadError,
       submitting,
@@ -305,6 +301,7 @@ export default {
       longestLeadTime,
       canPlaceOrder,
       formatMoney,
+      formatBudget,
       setQuantity,
       placeOrder,
       translateProductName
