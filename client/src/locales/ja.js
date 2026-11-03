@@ -64,8 +64,11 @@ export default {
       daysDelayed: '遅延日数',
       priority: '優先度',
       unitsShort: '単位不足',
-      days: '日'
+      days: '日',
+      createPO: '発注書を作成',
+      viewPO: '発注書を表示'
     },
+    loadFailed: 'ダッシュボードデータを読み込めませんでした: {message}',
     topProducts: {
       title: '収益別トップ製品',
       sku: 'SKU',
@@ -243,7 +246,8 @@ export default {
     category: 'カテゴリ',
     orderStatus: '注文ステータス',
     all: 'すべて',
-    allMonths: 'すべての月'
+    allMonths: 'すべての月',
+    reset: 'フィルターをすべてリセット'
   },
 
   // Statuses
@@ -255,7 +259,8 @@ export default {
     submitted: '発注済み',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
-    adequate: '適量'
+    adequate: '適量',
+    outOfStock: '在庫切れ'
   },
 
   // Trends
@@ -350,7 +355,38 @@ export default {
     priority: '優先度',
     dueDate: '期限',
     addTask: 'タスクを追加',
-    noTasks: 'タスクがありません。上記からタスクを追加してください！'
+    noTasks: 'タスクがありません。上記からタスクを追加してください！',
+    deleteTask: 'タスクを削除'
+  },
+
+  // Backlog Detail Modal
+  backlogDetail: {
+    title: '在庫不足の詳細',
+    priorityLabel: '優先度: {priority}',
+    shortageAmount: '不足数量',
+    itemSku: '品目SKU',
+    expectedDate: '予定日'
+  },
+
+  // Inventory Detail Modal
+  inventoryDetail: {
+    title: '在庫品目の詳細',
+    stockLevel: '在庫レベル',
+    vsReorderPoint: '再注文点との比較',
+    unitsRemaining: '残り数量'
+  },
+
+  // Product Detail Modal
+  productDetail: {
+    title: '製品詳細',
+    currentStock: '現在の在庫',
+    firstOrderDate: '初回注文日'
+  },
+
+  // Cost Detail Modal
+  costDetail: {
+    title: '{month}のコスト内訳',
+    percentOfTotal: '全体の{percent}%'
   },
 
   // Language
@@ -372,7 +408,11 @@ export default {
     search: '検索',
     filter: 'フィルター',
     export: 'エクスポート',
-    items: '件'
+    items: '件',
+    unitsCount: '{count}個',
+    notAvailable: '該当なし',
+    unknown: '不明',
+    actions: '操作'
   },
 
   // Product Names

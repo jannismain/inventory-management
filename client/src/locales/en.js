@@ -64,8 +64,11 @@ export default {
       daysDelayed: 'Days Delayed',
       priority: 'Priority',
       unitsShort: 'units short',
-      days: 'days'
+      days: 'days',
+      createPO: 'Create PO',
+      viewPO: 'View PO'
     },
+    loadFailed: 'Failed to load dashboard data: {message}',
     topProducts: {
       title: 'Top Products by Revenue',
       sku: 'SKU',
@@ -243,7 +246,8 @@ export default {
     category: 'Category',
     orderStatus: 'Order Status',
     all: 'All',
-    allMonths: 'All Months'
+    allMonths: 'All Months',
+    reset: 'Reset all filters'
   },
 
   // Statuses
@@ -255,7 +259,8 @@ export default {
     submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
-    adequate: 'Adequate'
+    adequate: 'Adequate',
+    outOfStock: 'Out of Stock'
   },
 
   // Trends
@@ -350,7 +355,38 @@ export default {
     priority: 'Priority',
     dueDate: 'Due Date',
     addTask: 'Add Task',
-    noTasks: 'No tasks yet. Add your first task above!'
+    noTasks: 'No tasks yet. Add your first task above!',
+    deleteTask: 'Delete task'
+  },
+
+  // Backlog Detail Modal
+  backlogDetail: {
+    title: 'Inventory Shortage Details',
+    priorityLabel: '{priority} Priority',
+    shortageAmount: 'Shortage Amount',
+    itemSku: 'Item SKU',
+    expectedDate: 'Expected Date'
+  },
+
+  // Inventory Detail Modal
+  inventoryDetail: {
+    title: 'Inventory Item Details',
+    stockLevel: 'Stock Level',
+    vsReorderPoint: 'vs. reorder point',
+    unitsRemaining: 'Units Remaining'
+  },
+
+  // Product Detail Modal
+  productDetail: {
+    title: 'Product Details',
+    currentStock: 'Current Stock',
+    firstOrderDate: 'First Order Date'
+  },
+
+  // Cost Detail Modal
+  costDetail: {
+    title: '{month} Cost Breakdown',
+    percentOfTotal: '{percent}% of total'
   },
 
   // Language
@@ -372,6 +408,10 @@ export default {
     search: 'Search',
     filter: 'Filter',
     export: 'Export',
-    items: 'items'
+    items: 'items',
+    unitsCount: '{count} units',
+    notAvailable: 'N/A',
+    unknown: 'Unknown',
+    actions: 'Actions'
   }
 }

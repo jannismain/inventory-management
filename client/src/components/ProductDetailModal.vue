@@ -4,7 +4,7 @@
       <div v-if="isOpen && product" class="modal-overlay" @click="close">
         <div class="modal-container" @click.stop>
           <div class="modal-header">
-            <h3 class="modal-title">Product Details</h3>
+            <h3 class="modal-title">{{ t('productDetail.title') }}</h3>
             <button class="close-button" @click="close">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -25,51 +25,51 @@
                 <div class="product-sku">SKU: {{ product.sku }}</div>
               </div>
               <span class="badge stock-badge" :class="getStockBadgeClass(product.stockLevel)">
-                {{ product.stockLevel }}
+                {{ translateStockLevel(product.stockLevel) }}
               </span>
             </div>
 
             <div class="info-grid">
               <div class="info-item">
-                <div class="info-label">Category</div>
+                <div class="info-label">{{ t('dashboard.topProducts.category') }}</div>
                 <div class="info-value">{{ product.category }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">Warehouse</div>
+                <div class="info-label">{{ t('dashboard.topProducts.warehouse') }}</div>
                 <div class="info-value">{{ product.warehouse }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">Units Ordered</div>
+                <div class="info-label">{{ t('dashboard.topProducts.unitsOrdered') }}</div>
                 <div class="info-value">{{ product.unitsOrdered }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">Total Revenue</div>
+                <div class="info-label">{{ t('finance.totalRevenue') }}</div>
                 <div class="info-value">{{ currencySymbol }}{{ product.revenue.toLocaleString() }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">Current Stock</div>
-                <div class="info-value">{{ product.quantityOnHand }} units</div>
+                <div class="info-label">{{ t('productDetail.currentStock') }}</div>
+                <div class="info-value">{{ t('common.unitsCount', { count: product.quantityOnHand }) }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">Reorder Point</div>
-                <div class="info-value">{{ product.reorderPoint }} units</div>
+                <div class="info-label">{{ t('inventory.table.reorderPoint') }}</div>
+                <div class="info-value">{{ t('common.unitsCount', { count: product.reorderPoint }) }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">First Order Date</div>
+                <div class="info-label">{{ t('productDetail.firstOrderDate') }}</div>
                 <div class="info-value">{{ formatDate(product.firstOrderDate) }}</div>
               </div>
 
               <div class="info-item">
-                <div class="info-label">Stock Status</div>
+                <div class="info-label">{{ t('dashboard.topProducts.stockStatus') }}</div>
                 <div class="info-value">
                   <span :class="['badge', getStockBadgeClass(product.stockLevel)]">
-                    {{ product.stockLevel }}
+                    {{ translateStockLevel(product.stockLevel) }}
                   </span>
                 </div>
               </div>
@@ -77,7 +77,7 @@
           </div>
 
           <div class="modal-footer">
-            <button class="btn-secondary" @click="close">Close</button>
+            <button class="btn-secondary" @click="close">{{ t('common.close') }}</button>
           </div>
         </div>
       </div>
@@ -89,7 +89,17 @@
 import { computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
 
-const { currentCurrency } = useI18n()
+const { t, currentLocale, currentCurrency } = useI18n()
+
+const translateStockLevel = (stockLevel) => {
+  const labels = {
+    'In Stock': t('status.inStock'),
+    'Low Stock': t('status.lowStock'),
+    'Out of Stock': t('status.outOfStock'),
+    'Unknown': t('common.unknown')
+  }
+  return labels[stockLevel] || stockLevel
+}
 
 const currencySymbol = computed(() => {
   return currentCurrency.value === 'JPY' ? '¥' : '$'
@@ -113,9 +123,9 @@ const close = () => {
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return t('common.notAvailable')
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(currentLocale.value === 'ja' ? 'ja-JP' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
