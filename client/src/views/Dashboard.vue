@@ -188,23 +188,24 @@
                   v-for="item in backlogItems"
                   :key="item.id"
                   class="backlog-row"
+                  @click="showBacklogDetail(item)"
                 >
-                  <td @click="showBacklogDetail(item)"><strong>{{ item.order_id }}</strong></td>
-                  <td @click="showBacklogDetail(item)"><strong>{{ item.item_sku }}</strong></td>
-                  <td @click="showBacklogDetail(item)">{{ translateProductName(item.item_name) }}</td>
-                  <td class="num" @click="showBacklogDetail(item)">{{ item.quantity_needed }}</td>
-                  <td class="num" @click="showBacklogDetail(item)">{{ item.quantity_available }}</td>
-                  <td class="num" @click="showBacklogDetail(item)">
+                  <td><button type="button" class="row-link" :aria-label="t('common.viewDetails') + ': ' + item.order_id"><strong>{{ item.order_id }}</strong></button></td>
+                  <td><strong>{{ item.item_sku }}</strong></td>
+                  <td>{{ translateProductName(item.item_name) }}</td>
+                  <td class="num">{{ item.quantity_needed }}</td>
+                  <td class="num">{{ item.quantity_available }}</td>
+                  <td class="num">
                     <span class="badge danger">
                       {{ Math.abs(item.quantity_needed - item.quantity_available) }} {{ t('dashboard.inventoryShortages.unitsShort') }}
                     </span>
                   </td>
-                  <td class="num" @click="showBacklogDetail(item)">
+                  <td class="num">
                     <span :class="item.days_delayed > 7 ? 'days-critical' : 'days-warning'">
                       {{ item.days_delayed }} {{ t('dashboard.inventoryShortages.days') }}
                     </span>
                   </td>
-                  <td @click="showBacklogDetail(item)">
+                  <td>
                     <span :class="['badge', item.priority]">
                       {{ translatePriority(item.priority) }}
                     </span>
@@ -256,7 +257,7 @@
                   class="clickable-row"
                   @click="showProductDetail(item)"
                 >
-                  <td><strong>{{ translateProductName(item.name) }}</strong></td>
+                  <td><button type="button" class="row-link" :aria-label="t('common.viewDetails') + ': ' + translateProductName(item.name)"><strong>{{ translateProductName(item.name) }}</strong></button></td>
                   <td>{{ item.sku }}</td>
                   <td>{{ translateCategory(item.category) }}</td>
                   <td class="num">{{ item.unitsOrdered }}</td>
@@ -965,6 +966,7 @@ export default {
   cursor: pointer;
 }
 
+.backlog-row:hover,
 .clickable-row:hover {
   background: var(--color-primary-soft);
 }

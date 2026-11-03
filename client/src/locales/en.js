@@ -167,7 +167,8 @@ export default {
       procurement: 'Procurement',
       operational: 'Operational',
       labor: 'Labor',
-      overhead: 'Overhead'
+      overhead: 'Overhead',
+      viewDetails: 'View cost details for {month}'
     },
     categorySpending: {
       title: 'Spending by Category',

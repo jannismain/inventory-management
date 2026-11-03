@@ -89,7 +89,15 @@
             </div>
             <div class="chart-area">
               <div v-for="month in monthlySpending" :key="month.month" class="bar-group">
-                <div class="stacked-bar" @click="showCostDetail(month)">
+                <div
+                  class="stacked-bar"
+                  role="button"
+                  tabindex="0"
+                  :aria-label="t('finance.monthlyCostFlow.viewDetails', { month: translateMonth(month.month) })"
+                  @click="showCostDetail(month)"
+                  @keydown.enter="showCostDetail(month)"
+                  @keydown.space.prevent="showCostDetail(month)"
+                >
                   <div class="bar-segment procurement" :style="{ height: getBarHeight(month.procurement) + '%' }" :title="`Procurement: ${currencySymbol}${month.procurement.toLocaleString()}`"></div>
                   <div class="bar-segment operational" :style="{ height: getBarHeight(month.operational) + '%' }" :title="`Operational: ${currencySymbol}${month.operational.toLocaleString()}`"></div>
                   <div class="bar-segment labor" :style="{ height: getBarHeight(month.labor) + '%' }" :title="`Labor: ${currencySymbol}${month.labor.toLocaleString()}`"></div>
@@ -150,7 +158,7 @@
                   class="clickable-row"
                   @click="handleTransactionClick(transaction)"
                 >
-                  <td class="transaction-id">{{ transaction.id.toString().padStart(3, '0') }}</td>
+                  <td class="transaction-id"><button type="button" class="row-link" :aria-label="t('common.viewDetails') + ': ' + transaction.id.toString().padStart(3, '0')">{{ transaction.id.toString().padStart(3, '0') }}</button></td>
                   <td class="transaction-description">{{ transaction.description }}</td>
                   <td class="transaction-vendor">{{ transaction.vendor }}</td>
                   <td class="transaction-date">{{ formatDateShort(transaction.date) }}</td>
@@ -639,6 +647,11 @@ export default {
   padding-bottom: var(--space-8);
   cursor: pointer;
   transition: opacity var(--transition-base);
+}
+
+.stacked-bar:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .stacked-bar:hover {

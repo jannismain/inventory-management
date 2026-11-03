@@ -55,7 +55,7 @@
                 class="clickable-row"
                 @click="showItemDetail(item)"
               >
-                <td><strong>{{ item.sku }}</strong></td>
+                <td><button type="button" class="row-link" :aria-label="t('common.viewDetails') + ': ' + item.sku"><strong>{{ item.sku }}</strong></button></td>
                 <td>{{ translateProductName(item.name) }}</td>
                 <td>{{ translateCategory(item.category) }}</td>
                 <td class="num"><strong>{{ item.quantity_on_hand }}</strong></td>

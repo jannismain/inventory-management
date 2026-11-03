@@ -421,6 +421,17 @@ export default {
   outline-offset: 2px;
 }
 
+/* Native button inside a clickable table row; the row's @click handles activation. */
+.row-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
 * {
   margin: 0;
   padding: 0;

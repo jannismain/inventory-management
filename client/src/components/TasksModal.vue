@@ -79,11 +79,12 @@
                   <div class="task-check-title">
                     <input
                       type="checkbox"
+                      :id="`task-check-${task.id}`"
                       :checked="task.status === 'completed'"
                       @change="$emit('toggle-task', task.id)"
                       class="task-checkbox"
                     />
-                    <span class="task-title" @click="$emit('toggle-task', task.id)">{{ task.title }}</span>
+                    <label class="task-title" :for="`task-check-${task.id}`">{{ task.title }}</label>
                   </div>
                   <button @click="$emit('delete-task', task.id)" class="task-delete-btn" title="Delete task">
                     ×

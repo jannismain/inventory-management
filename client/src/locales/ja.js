@@ -167,7 +167,8 @@ export default {
       procurement: '調達',
       operational: '運営',
       labor: '人件費',
-      overhead: '間接費'
+      overhead: '間接費',
+      viewDetails: '{month}のコスト詳細を表示'
     },
     categorySpending: {
       title: 'カテゴリ別支出',
